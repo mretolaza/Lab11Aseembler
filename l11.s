@@ -14,20 +14,20 @@ main:
 	@utilizando la biblioteca GPIO (gpio0.s)
 	bl GetGpioAddress 	@solo se llama una vez
 	
-    /* Se cambian los GPIO de escritura por los puertos 11,12 y 13  */
-	@GPIO para escritura (salida) puerto 11
-	mov r0,#11
+    /* Se cambian los GPIO de escritura por los puertos 17,18 y 27  */
+	@GPIO para escritura (salida) puerto 17
+	mov r0,#17
 	mov r1,#1 
 	bl SetGpioFunction
     /* Comienzan cambios */ 
     /* Se añaden puertos de escritura para los leds  */
-    @GPIO para escritura (salida) puerto 12
-	mov r0,#12
+    @GPIO para escritura (salida) puerto 18
+	mov r0,#18
 	mov r1,#1
 	bl SetGpioFunction
 
-	@GPIO para escritura (salida) puerto 13
-	mov r0,#13
+	@GPIO para escritura (salida) puerto 27
+	mov r0,#27
 	mov r1,#1
 	bl SetGpioFunction
 	/* El puerto de lectura se fija en el GPIO 14 */ 
@@ -38,14 +38,14 @@ main:
 	bl wait @ Se añade una sub rutina de espera para que se puedan observar los cambios en los leds 
 
 	/* Se incorpora instruccion de apagar */ 
-	@Apagar GPIO 12
-	mov r0,#12
+	@Apagar GPIO 18
+	mov r0,#18
 	mov r1,#0
 	bl SetGpio
 
 	/* Se incorpora instruccion de apagar */ 
-	@Apagar GPIO 13
-	mov r0,#13
+	@Apagar GPIO 27
+	mov r0,#27
 	mov r1,#0
 	bl SetGpio
 
@@ -65,7 +65,7 @@ loop:
 	/* Se añaden cambios*/ 
 
 
-	@Si el boton esta en alto (1), fue presionado y enciende GPIO 11
+	@Si el boton esta en alto (1), fue presionado y enciende GPIO 17
 	cmp r5,#0
 	beq  revision1 @se llama a la etiqueta revision 1 
 	b  loop
@@ -79,9 +79,9 @@ revision1:
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
 	mov r7,#1
-	lsl r7,#11
-	and r5,r7		@se revisa el bit 11 (puerto de salida)
-	@Si el boton esta en alto (1), fue presionado y enciende GPIO 11
+	lsl r7,#17
+	and r5,r7		@se revisa el bit 17 (puerto de salida)
+	@Si el boton esta en alto (1), fue presionado y enciende GPIO 17
 	cmp  r5,#0
 	beq fin1 @se llama a la etiqueta fin1 
 	bne revision2 
@@ -95,9 +95,9 @@ revision2:
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
 	mov r7,#1
-	lsl r7,#12
-	and r5,r7		@se revisa el bit 12 (puerto de salida)
-	@Si el boton esta en alto (1), fue presionado y enciende GPIO 12
+	lsl r7,#18
+	and r5,r7		@se revisa el bit 18 (puerto de salida)
+	@Si el boton esta en alto (1), fue presionado y enciende GPIO 18
 	cmp  r5,#0
 	beq fin2 @se llama a la etiqueta fin2
 	bne revision3
@@ -111,9 +111,9 @@ revision3:
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
 	mov r7,#1
-	lsl r7,#13
-	and r5,r7		@se revisa el bit 13 (puerto de salida)
-	@Si el boton esta en alto (1), fue presionado y enciende GPIO 13
+	lsl r7,#27
+	and r5,r7		@se revisa el bit 27 (puerto de salida)
+	@Si el boton esta en alto (1), fue presionado y enciende GPIO 27
 	cmp  r5,#0
 	beq fin3 @se llama a la etiqueta fin3
 	bne loop
@@ -122,17 +122,17 @@ revision3:
 /* Se realizan las instrucciones de salida del sistema*/ 
 
 fin1: 
-	movne r0,#11 
+	movne r0,#17 
 	movne r1, #1 
 	blne SetGpio 
 	b loop 
 fin2: 
-	movne r0,#12 
+	movne r0,#18 
 	movne r1, #1 
 	blne SetGpio 
 	b loop 
 fin3: 
-	movne r0,#13 
+	movne r0,#27 
 	movne r1, #1 
 	blne SetGpio 
 	b loop 
