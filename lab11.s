@@ -14,7 +14,12 @@ Descripción del programa: Se encienden tres leds de manera intermitente.;*/
 main:
 	@utilizando la biblioteca GPIO (gpio0.s)
 	bl GetGpioAddress 	@solo se llama una vez
-	
+	/* Se fija puerto de lectura*/ 
+	@GPIO para lectura (entrada) puerto 14 
+	mov r0,#14
+	mov r1,#0
+	bl SetGpioFunction
+	/* Se añaden los puertos de escritura (Salida del programa)*/ 
     /* Se cambian los GPIO de escritura por los puertos 17,18 y 27  */
 	@GPIO para escritura (salida) puerto 17
 	mov r0,#17
@@ -31,20 +36,19 @@ main:
 	mov r0,#27
 	mov r1,#1
 	bl SetGpioFunction
-	/* El puerto de lectura se fija en el GPIO 14 */ 
-   	@GPIO para lectura (entrada) puerto 14 
-	mov r0,#14
-	mov r1,#0
-	bl SetGpioFunction
-	bl wait @ Se añade una sub rutina de espera para que se puedan observar los cambios en los leds 
-
-	/* Se incorpora instruccion de apagar */ 
-	@Apagar GPIO 18
-	mov r0,#18
+	
+	/* Se incorpora instrucciones de apagar */ 
+	@Apagar GPIO 17
+	mov r0,#17
 	mov r1,#0
 	bl SetGpio
 
 	/* Se incorpora instruccion de apagar */ 
+	@Apagar GPIO 18
+	mov r0,#27
+	mov r1,#0
+	bl SetGpio
+
 	@Apagar GPIO 27
 	mov r0,#27
 	mov r1,#0
@@ -67,7 +71,8 @@ loop:
 	/* Se añaden cambios*/ 
 	@Si el boton esta en alto (1), fue presionado y enciende GPIO 17
 	teq r7,#0
-	beq  revision1 
+
+	bne  revision1 
 	b  loop
 
 	/* Se añaden etiquetas en el programa, esto con el fin de hacer mas sencilla su interacion y movimientos */ 
@@ -77,8 +82,10 @@ revision1:
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
 	mov r7,#1
 	lsl r7,#17
-	and r5,r7,r7 		@se revisa el bit 17 (puerto de salida)
-	
+	and r5,r7 		@se revisa el bit 17 (puerto de salida)
+	teq r7, #0
+
+	@Si el boton esta en alto (1) significa que fue presionado y enciende GPIO 17 
 	teq  r5,#0
 	beq fin1 @se llama a la etiqueta fin1 
 	bne revision2 
