@@ -72,11 +72,11 @@ loop:
 	@Si el boton esta en alto (1), fue presionado y enciende GPIO 17
 	teq r7,#0
 
-	bne  revision1 
+	bne  revision2 
 	b  loop
 
 	/* Se añaden etiquetas en el programa, esto con el fin de hacer mas sencilla su interacion y movimientos */ 
-revision1:
+revision2:
 	ldr r6, =myloc
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
@@ -84,72 +84,71 @@ revision1:
 	lsl r7,#17
 	and r5,r7 		@se revisa el bit 17 (puerto de salida)
 	teq r7, #0
-
-	@Si el boton esta en alto (1) significa que fue presionado y enciende GPIO 17 
-	teq  r5,#0
 	beq fin1 @se llama a la etiqueta fin1 
-	bne revision2 
+	bne revision3 
 	b  loop 
 
-revision2: 
-	ldr r6, =myloc
- 	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
-	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
-	mov r7,#1
-	lsl r7,#18
-	and r5,r7,r7 @se revisa el bit 18 (puerto de salida)
-	
-	@Si el boton esta en alto (1), fue presionado y enciende GPIO 18
-	teq r7,#0
-	beq fin2 @se llama a la etiqueta fin2
-	bne revision3
-	b  loop 
 
 revision3: 
 	ldr r6, =myloc
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
 	mov r7,#1
-	lsl r7,#27
-	and r5,r7,r5		@se revisa el bit 27 (puerto de salida)
-	@Si el boton esta en alto (1), fue presionado y enciende GPIO 27
-
-	teq  r7,#0
-	beq fin3 @se llama a la etiqueta fin3
+	lsl r7,#18
+	and r7,r5,r7 @se revisa el bit 18 (puerto de salida)
+	
+	@Si el boton esta en alto (1), fue presionado y enciende GPIO 18
+	teq r7,#0
+	beq fin2 @se llama a la etiqueta fin2
 	bne revision4
-	b   loop 
+	b  loop 
 
-/*revision4
-
+revision4: 
 	ldr r6, =myloc
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
 	mov r7,#1
 	lsl r7,#27
-	and r5,r7,r5		@se revisa el bit 27 (puerto de salida)
+	and r7,r5,r7		@se revisa el bit 27 (puerto de salida)
+	
 	@Si el boton esta en alto (1), fue presionado y enciende GPIO 27
-
 	teq  r7,#0
 	beq fin3 @se llama a la etiqueta fin3
-	bne revision4
-	b   loop */ 
+	bne loop
+	b   loop 
 
-/* Se realizan las instrucciones de salida del sistema*/ 
+/* Espacio donde se establecen las etiquetas de salida
+del programa */ 
 
 fin1: 
 	movne r0,#17 
 	movne r1, #1 
-	blne SetGpio 
+	bl SetGpio
+
+	mov r0, #18
+	mov r1,#0 
+	bl SetGpio 
+
 	b loop 
 fin2: 
 	movne r0,#18 
 	movne r1, #1 
-	blne SetGpio 
+	bl SetGpio 
+
+	mov r0, #27
+	mov r1,#0 
+	bl SetGpio 
+
 	b loop 
 fin3: 
 	movne r0,#27 
 	movne r1, #1 
 	blne SetGpio 
+
+	mov r0, #17 
+	mov r1,#0 
+	bl SetGpio 
+
 	b loop 
 
 @ brief pause routine
