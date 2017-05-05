@@ -72,11 +72,11 @@ loop:
 	@Si el boton esta en alto (1), fue presionado y enciende GPIO 17
 	teq r7,#0
 
-	bne  revision2 
+	bne  revision1 @1
 	b  loop
 
 	/* Se añaden etiquetas en el programa, esto con el fin de hacer mas sencilla su interacion y movimientos */ 
-revision2:
+revision1: @1
 	ldr r6, =myloc
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
@@ -85,11 +85,11 @@ revision2:
 	and r5,r7 		@se revisa el bit 17 (puerto de salida)
 	teq r7, #0
 	beq fin1 @se llama a la etiqueta fin1 
-	bne revision3 
+	bne revision2 @2
 	b  loop 
 
 
-revision3: 
+revision2: @2
 	ldr r6, =myloc
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
@@ -100,10 +100,10 @@ revision3:
 	@Si el boton esta en alto (1), fue presionado y enciende GPIO 18
 	teq r7,#0
 	beq fin2 @se llama a la etiqueta fin2
-	bne revision4
+	bne revision3 @3
 	b  loop 
 
-revision4: 
+revision3: @3
 	ldr r6, =myloc
  	ldr r0, [r6] 		@ obtener direccion de la memoria virtual 
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
