@@ -82,7 +82,8 @@ revision1: @1
 	ldr r5,[r0,#0x34] 	@Direccion r0+0x34:lee en r5 estado de puertos de entrada
 	mov r7,#1
 	lsl r7,#17
-	and r5,r7 		@se revisa el bit 17 (puerto de salida)
+	and r7,r5,r7 		@se revisa el bit 17 (puerto de salida)
+	
 	teq r7, #0
 	beq fin1 @se llama a la etiqueta fin1 
 	bne revision2 @2
@@ -159,8 +160,8 @@ fin3:
  bne sleepLoop @ loop delay
  mov pc,lr
 
- .data
- .align 2
+.data
+.align 2
 .global myloc
 myloc: .word 0
 
